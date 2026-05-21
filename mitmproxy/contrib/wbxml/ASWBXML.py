@@ -28,6 +28,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 '''
 import xml.dom.minidom
+from defusedxml import minidom
 import logging
 
 from .ASWBXMLCodePage import ASWBXMLCodePage
@@ -816,7 +817,7 @@ class ASWBXML:
 	
 	def loadXml(self, strXML):
 		# note xmlDoc has .childNodes and .parentNode
-		self.xmlDoc = xml.dom.minidom.parseString(strXML)
+		self.xmlDoc = minidom.parseString(strXML)
 
 	def getXml(self):
 		if (self.xmlDoc != None):
