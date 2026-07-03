@@ -150,7 +150,8 @@ class Command:
         if ret is None and self.return_type is None:
             return
         typ = mitmproxy.types.CommandTypes.get(self.return_type)
-        assert typ
+        if not typ:
+            raise AssertionError
         if not typ.is_valid(self.manager, typ, ret):
             raise exceptions.CommandError(
                 f"{self.name} returned unexpected data - expected {typ.display}"
@@ -222,7 +223,8 @@ class CommandManager:
                 continue
 
             if expected and expected.kind is inspect.Parameter.VAR_POSITIONAL:
-                assert not next_params
+                if next_params:
+                    raise AssertionError
             elif next_params:
                 expected = next_params.pop(0)
             else:
@@ -335,7 +337,8 @@ def argument(name, type):
     """
 
     def decorator(f: types.FunctionType) -> types.FunctionType:
-        assert name in f.__annotations__
+        if name not in f.__annotations__:
+            raise AssertionError
         f.__annotations__[name] = type
         return f
 

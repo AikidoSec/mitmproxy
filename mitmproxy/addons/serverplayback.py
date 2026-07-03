@@ -279,7 +279,8 @@ class ServerPlayback:
         if self.flowmap:
             rflow = self.next_flow(f)
             if rflow:
-                assert rflow.response
+                if not rflow.response:
+                    raise AssertionError
                 response = rflow.response.copy()
                 if ctx.options.server_replay_refresh:
                     response.refresh()

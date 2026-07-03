@@ -305,7 +305,8 @@ class Server(Connection):
         else:
             local_port = ""
         state = self.state.name
-        assert state
+        if not state:
+            raise AssertionError
         return f"Server({human.format_address(self.address)}, state={state.lower()}{tls_state}{local_port})"
 
     def __setattr__(self, name, value):

@@ -266,7 +266,8 @@ def create_client_proxy_context(
             raise RuntimeError(f"Cannot load certificate chain ({chain_file}).") from e
 
     if alpn_select_callback is not None:
-        assert callable(alpn_select_callback)
+        if not callable(alpn_select_callback):
+            raise AssertionError
         context.set_alpn_select_callback(alpn_select_callback)
 
     if request_client_cert:

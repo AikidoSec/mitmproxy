@@ -52,15 +52,16 @@ class ContentviewRegistry(Mapping[str, Contentview]):
         for name, view in self._by_name.items():
             try:
                 priority = view.render_priority(data, metadata)
-                assert isinstance(priority, (int, float)), (
-                    f"render_priority for {view.name} did not return a number."
-                )
+                if not isinstance(priority, (int, float)):
+                    raise AssertionError(
+                        f"render_priority for {view.name} did not return a number.")
             except Exception:
                 logger.exception(f"Error in {view.name}.render_priority")
             else:
                 if max_prio is None or max_prio[0] < priority:
                     max_prio = (priority, view)
-        assert max_prio, "At least one view needs to have a working `render_priority`."
+        if not max_prio:
+            raise AssertionError("At least one view needs to have a working `render_priority`.")
         return max_prio[1]
 
     def __iter__(self) -> typing.Iterator[str]:

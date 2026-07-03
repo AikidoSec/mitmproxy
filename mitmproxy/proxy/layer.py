@@ -110,7 +110,8 @@ class Layer:
                 message = message[:256] + "…"
         else:
             Layer.__last_debug_message = message
-        assert self.debug is not None
+        if self.debug is None:
+            raise AssertionError
         return commands.Log(textwrap.indent(message, self.debug), DEBUG)
 
     @property
@@ -138,7 +139,8 @@ class Layer:
             if self.debug is not None:
                 yield self.__debug(f"{'>>' if pause_finished else '>!'} {event}")
             if pause_finished:
-                assert isinstance(event, events.CommandCompleted)
+                if not isinstance(event, events.CommandCompleted):
+                    raise AssertionError
                 yield from self.__continue(event)
             else:
                 self._paused_event_queue.append(event)
@@ -227,7 +229,8 @@ class Layer:
         The tricky part here is that events in the event queue may trigger commands which again pause the execution,
         so we may not be able to process the entire queue.
         """
-        assert self._paused is not None
+        if self._paused is None:
+            raise AssertionError
         command_generator = self._paused.generator
         self._paused = None
         yield from self.__process(command_generator, event.reply)

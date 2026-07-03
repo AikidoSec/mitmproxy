@@ -89,8 +89,10 @@ class Http3Contentview(Contentview):
     def prettify(self, data: bytes, metadata: Metadata) -> str:
         flow = metadata.flow
         tcp_message = metadata.tcp_message
-        assert isinstance(flow, tcp.TCPFlow)
-        assert tcp_message
+        if not isinstance(flow, tcp.TCPFlow):
+            raise AssertionError
+        if not tcp_message:
+            raise AssertionError
 
         state = self.connections[flow]
 
