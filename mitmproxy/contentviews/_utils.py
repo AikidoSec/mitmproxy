@@ -59,7 +59,8 @@ def get_data(
     try:
         content = message.content
     except ValueError:
-        assert isinstance(message, http.Message)
+        if not isinstance(message, http.Message):
+            raise AssertionError
         content = message.raw_content
         enc = "[cannot decode]"
     else:

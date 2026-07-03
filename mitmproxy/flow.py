@@ -159,8 +159,10 @@ class Flow(serializable.Serializable):
         return state
 
     def set_state(self, state: serializable.State) -> None:
-        assert state.pop("version") == version.FLOW_FORMAT_VERSION
-        assert state.pop("type") == self.type
+        if state.pop("version") != version.FLOW_FORMAT_VERSION:
+            raise AssertionError
+        if state.pop("type") != self.type:
+            raise AssertionError
         self.id = state.pop("id")
         if state["error"]:
             if self.error:
@@ -178,7 +180,8 @@ class Flow(serializable.Serializable):
         self.comment = state.pop("comment")
         self.timestamp_created = state.pop("timestamp_created")
         self._backup = state.pop("backup", None)
-        assert state == {}
+        if state != {}:
+            raise AssertionError
 
     @classmethod
     def from_state(cls, state: serializable.State) -> Flow:

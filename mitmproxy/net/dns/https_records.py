@@ -61,14 +61,17 @@ class HTTPSRecord:
     @classmethod
     def from_json(cls, data: HTTPSRecordJSON) -> Self:
         target_name = data.pop("target_name")
-        assert isinstance(target_name, str)
+        if not isinstance(target_name, str):
+            raise AssertionError
         priority = data.pop("priority")
-        assert isinstance(priority, int)
+        if not isinstance(priority, int):
+            raise AssertionError
         params: dict[int, bytes] = {}
         for k, v in data.items():
             if isinstance(k, str):
                 k = SVCParamKeys[k.upper()].value
-            assert isinstance(v, str)
+            if not isinstance(v, str):
+                raise AssertionError
             params[k] = strutils.escaped_str_to_bytes(v)
         return cls(target_name=target_name, priority=priority, params=params)
 

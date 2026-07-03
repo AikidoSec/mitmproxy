@@ -137,7 +137,8 @@ class Master:
             # easy to replay saved flows against a different host.
             # We may change this in the future so that clientplayback always replays to the first mode.
             mode = ReverseMode.parse(self.options.mode[0])
-            assert isinstance(mode, ReverseMode)
+            if not isinstance(mode, ReverseMode):
+                raise AssertionError
             f.request.host, f.request.port, *_ = mode.address
             f.request.scheme = mode.scheme
 

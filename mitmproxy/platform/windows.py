@@ -501,12 +501,14 @@ class TransparentProxy:
 
         # We do need to inject to an external IP here, 127.0.0.1 does not work.
         if packet.address_family == socket.AF_INET:
-            assert self.ipv4_address
+            if not self.ipv4_address:
+                raise AssertionError
             packet.dst_addr = self.ipv4_address
         elif packet.address_family == socket.AF_INET6:
             if not self.ipv6_address:
                 self.ipv6_address = get_local_ip6(packet.src_addr)
-            assert self.ipv6_address
+            if not self.ipv6_address:
+                raise AssertionError
             packet.dst_addr = self.ipv6_address
         else:
             raise RuntimeError("Unknown address family")

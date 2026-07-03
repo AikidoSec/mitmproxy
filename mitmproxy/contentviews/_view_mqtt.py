@@ -101,7 +101,8 @@ Password: {strutils.bytes_to_escaped_str(self.payload.get("Password", b"None"))}
             s += " sent topic filters: "
             s += ", ".join([f"'{tf}'" for tf in self.topic_filters])
         elif self.packet_type == self.PUBLISH:
-            assert self.payload
+            if not self.payload:
+                raise AssertionError
             topic_name = strutils.bytes_to_escaped_str(self.topic_name)
             payload = strutils.bytes_to_escaped_str(self.payload)
 
