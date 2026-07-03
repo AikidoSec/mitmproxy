@@ -51,8 +51,10 @@ def safecall():
         etype, value, tb = sys.exc_info()
         tb = cut_traceback(tb, "invoke_addon_sync")
         tb = cut_traceback(tb, "invoke_addon")
-        assert etype
-        assert value
+        if not etype:
+            raise AssertionError
+        if not value:
+            raise AssertionError
         logger.error(
             f"Addon error: {value}",
             exc_info=(etype, value, tb),
@@ -82,7 +84,8 @@ class Loader:
         reflowed by tools. Information on the data type should be omitted -
         it will be generated and added by tools as needed.
         """
-        assert not isinstance(choices, str)
+        if isinstance(choices, str):
+            raise AssertionError()
         if name in self.master.options:
             existing = self.master.options._options[name]
             same_signature = (
@@ -244,7 +247,8 @@ class AddonManager:
         """
         Enumerate all hook callables belonging to the given addon
         """
-        assert isinstance(event, hooks.Hook)
+        if not isinstance(event, hooks.Hook):
+            raise AssertionError
         for a in traverse([addon]):
             func = getattr(a, event.name, None)
             if func:
