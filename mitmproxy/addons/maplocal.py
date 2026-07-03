@@ -56,7 +56,8 @@ def file_candidates(url: str, spec: MapLocalSpec) -> list[Path]:
     This function already assumes that the spec regex matches the URL.
     """
     m = re.search(spec.regex, url)
-    assert m
+    if not m:
+        raise AssertionError
     if m.groups():
         suffix = m.group(1)
     else:

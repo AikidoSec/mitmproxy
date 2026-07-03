@@ -12,7 +12,8 @@ class ServerSideEvents:
     """
 
     def response(self, flow: http.HTTPFlow):
-        assert flow.response
+        if not flow.response:
+            raise AssertionError
         is_sse = flow.response.headers.get("content-type", "").startswith(
             "text/event-stream"
         )
