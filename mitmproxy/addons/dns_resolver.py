@@ -118,7 +118,8 @@ class DnsResolver:
         message: dns.DNSMessage,
     ) -> dns.DNSMessage:
         q = message.question
-        assert q
+        if not q:
+            raise AssertionError
         try:
             if q.type == dns.types.A:
                 ip_addrs = await self.resolver().lookup_ipv4(q.name)

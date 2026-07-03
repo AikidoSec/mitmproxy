@@ -96,7 +96,7 @@ class ReplayHandler(server.ConnectionHandler):
             context.server.sni = flow.request.pretty_host
         if options.mode and options.mode[0].startswith("upstream:"):
             mode = UpstreamMode.parse(options.mode[0])
-            assert isinstance(mode, UpstreamMode)  # remove once mypy supports Self.
+            if not isinstance(mode, UpstreamMode): raise AssertionError()  # remove once mypy supports Self.
             context.server.via = flow.server_conn.via = (mode.scheme, mode.address)
 
         super().__init__(context)
@@ -121,7 +121,7 @@ class ReplayHandler(server.ConnectionHandler):
         | tuple[type[BaseException] | None, BaseException | None, TracebackType | None]
         | None = None,
     ) -> None:
-        assert isinstance(level, int)
+        if not isinstance(level, int): raise AssertionError
         logger.log(level=level, msg=f"[replay] {message}")
 
     async def handle_hook(self, hook: commands.StartHook) -> None:
@@ -175,7 +175,8 @@ class ClientPlayback:
         while True:
             self.inflight = await self.queue.get()
             try:
-                assert self.inflight
+                if not self.inflight:
+                    raise AssertionError
                 h = ReplayHandler(self.inflight, self.options)
                 if ctx.options.client_replay_concurrency == -1:
                     t = asyncio_utils.create_task(
