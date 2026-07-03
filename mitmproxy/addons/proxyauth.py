@@ -89,7 +89,8 @@ class ProxyAuth:
         If valid credentials are found, the matching authentication header is removed.
         In no or invalid credentials are found, flow.response is set to an error page.
         """
-        assert self.validator
+        if not self.validator:
+            raise AssertionError
         username = None
         password = None
         is_valid = False

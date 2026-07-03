@@ -37,7 +37,8 @@ def pop_headers(request: http.Request) -> None:
 def cleanup_response(f: flow.Flow) -> http.Response:
     if not getattr(f, "response", None):
         raise exceptions.CommandError("Can't export flow with no response.")
-    assert isinstance(f, http.HTTPFlow)
+    if not isinstance(f, http.HTTPFlow):
+        raise AssertionError
     response = f.response.copy()  # type: ignore
     response.decode(strict=False)
     return response
@@ -46,7 +47,8 @@ def cleanup_response(f: flow.Flow) -> http.Response:
 def request_content_for_console(request: http.Request) -> str:
     try:
         text = request.get_text(strict=True)
-        assert text
+        if not text:
+            raise AssertionError
     except ValueError:
         # shlex.quote doesn't support a bytes object
         # see https://github.com/python/cpython/pull/10871

@@ -345,7 +345,8 @@ class TlsConfig:
         tls_start.ssl_conn = SSL.Connection(ssl_ctx)
         if server.sni:
             # We need to set SNI + enable hostname verification.
-            assert isinstance(server.sni, str)
+            if not isinstance(server.sni, str):
+                raise AssertionError
             # Manually enable hostname verification on the context object.
             # https://wiki.openssl.org/index.php/Hostname_validation
             param = SSL._lib.SSL_get0_param(tls_start.ssl_conn._ssl)  # type: ignore
@@ -383,7 +384,8 @@ class TlsConfig:
         tls_start.settings = quic.QuicTlsSettings()
 
         # keep the following part in sync with `tls_start_client`
-        assert isinstance(tls_start.conn, connection.Client)
+        if not isinstance(tls_start.conn, connection.Client):
+            raise AssertionError
 
         client: connection.Client = tls_start.conn
         server: connection.Server = tls_start.context.server
@@ -424,11 +426,13 @@ class TlsConfig:
         tls_start.settings = quic.QuicTlsSettings()
 
         # keep the following part in sync with `tls_start_server`
-        assert isinstance(tls_start.conn, connection.Server)
+        if not isinstance(tls_start.conn, connection.Server):
+            raise AssertionError
 
         client: connection.Client = tls_start.context.client
         server: connection.Server = tls_start.conn
-        assert server.address
+        if not server.address:
+            raise AssertionError
 
         if ctx.options.ssl_insecure:
             tls_start.settings.verify_mode = ssl.CERT_NONE

@@ -22,7 +22,8 @@ class UpdateAltSvc:
         )
 
     def responseheaders(self, flow: HTTPFlow):
-        assert flow.response
+        if not flow.response:
+            raise AssertionError
         if (
             not ctx.options.keep_alt_svc_header
             and isinstance(flow.client_conn.proxy_mode, mode_specs.ReverseMode)

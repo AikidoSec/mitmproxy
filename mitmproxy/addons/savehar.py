@@ -134,7 +134,8 @@ class SaveHar:
             connect_time = -1.0
             ssl_time = -1.0
         elif flow.server_conn.timestamp_tcp_setup:
-            assert flow.server_conn.timestamp_start
+            if not flow.server_conn.timestamp_start:
+                raise AssertionError
             connect_time = 1000 * (
                 flow.server_conn.timestamp_tcp_setup - flow.server_conn.timestamp_start
             )
