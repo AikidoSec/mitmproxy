@@ -63,7 +63,8 @@ class Cert(serializable.Serializable):
     _cert: x509.Certificate
 
     def __init__(self, cert: x509.Certificate):
-        assert isinstance(cert, x509.Certificate)
+        if not isinstance(cert, x509.Certificate):
+            raise AssertionError
         self._cert = cert
 
     def __eq__(self, other):
@@ -341,10 +342,12 @@ def dummy_cert(
     subject = []
     is_valid_commonname = commonname is not None and len(commonname) < 64
     if is_valid_commonname:
-        assert commonname is not None
+        if commonname is None:
+            raise AssertionError
         subject.append(x509.NameAttribute(NameOID.COMMON_NAME, commonname))
     if organization is not None:
-        assert organization is not None
+        if organization is None:
+            raise AssertionError
         subject.append(x509.NameAttribute(NameOID.ORGANIZATION_NAME, organization))
     builder = builder.subject_name(x509.Name(subject))
     builder = builder.serial_number(x509.random_serial_number())

@@ -200,7 +200,8 @@ class Dumper:
             replay_str = ""
             replay = ""
 
-        assert flow.response
+        if not flow.response:
+            raise AssertionError
         code_int = flow.response.status_code
         code_color = None
         if 200 <= code_int < 300:
@@ -313,7 +314,8 @@ class Dumper:
                 self._echo_message(message, f)
 
     def websocket_end(self, f: http.HTTPFlow):
-        assert f.websocket is not None  # satisfy type checker
+        if f.websocket is None:
+            raise AssertionError  # satisfy type checker
         if self.match(f):
             if f.websocket.close_code in {1000, 1001, 1005}:
                 c = "client" if f.websocket.closed_by_client else "server"
@@ -401,7 +403,8 @@ class Dumper:
         self.echo(f"{client}: {desc} {name}")
 
     def dns_response(self, f: dns.DNSFlow):
-        assert f.response
+        if not f.response:
+            raise AssertionError
         if self.match(f):
             self._echo_dns_query(f)
 
@@ -420,7 +423,8 @@ class Dumper:
             self.echo(f"{arrows} {answers}")
 
     def dns_error(self, f: dns.DNSFlow):
-        assert f.error
+        if not f.error:
+            raise AssertionError
         if self.match(f):
             self._echo_dns_query(f)
             msg = strutils.escape_control_characters(f.error.msg)

@@ -115,7 +115,8 @@ class NextLayer:
     def _next_layer(
         self, context: Context, data_client: bytes, data_server: bytes
     ) -> Layer | None:
-        assert context.layers
+        if not context.layers:
+            raise AssertionError
 
         def s(*layers):
             return stack_match(context, layers)
