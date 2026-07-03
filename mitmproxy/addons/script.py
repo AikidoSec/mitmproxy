@@ -33,7 +33,8 @@ def load_script(path: str) -> types.ModuleType | None:
     try:
         loader = importlib.machinery.SourceFileLoader(fullname, path)
         spec = importlib.util.spec_from_loader(fullname, loader=loader)
-        assert spec
+        if not spec:
+            raise AssertionError
         m = importlib.util.module_from_spec(spec)
         loader.exec_module(m)
         if not getattr(m, "name", None):

@@ -13,7 +13,8 @@ class StripDnsHttpsRecords:
         )
 
     def dns_response(self, flow: dns.DNSFlow):
-        assert flow.response
+        if not flow.response:
+            raise AssertionError
         if ctx.options.strip_ech:
             for answer in flow.response.answers:
                 if answer.type == types.HTTPS:

@@ -378,7 +378,8 @@ class Proxyserver(ServerManager):
             data.server.sockname = self._connect_addr
 
         # Prevent mitmproxy from recursively connecting to itself.
-        assert data.server.address
+        if not data.server.address:
+            raise AssertionError
         connect_host, connect_port, *_ = data.server.address
 
         for server in self.servers:
